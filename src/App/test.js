@@ -18,6 +18,7 @@ describe('App', () => {
 			element
 				.find('Container')
 				.find('Title')
+				.dive()
 				.text()
 		).toEqual('Simple React Carousel');
 	});
