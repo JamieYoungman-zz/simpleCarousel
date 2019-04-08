@@ -14,7 +14,7 @@ SlideShowWrapper.displayName = 'SlideShowWrapper';
 const SlideWrapper = styled.div`
 	position: relative;
 	width: 100%;
-	transform: translateX(0px);
+	${props => `transform: translateX(${props.translateX}px)`};
 	transition: transform 0.3s ease-out;
 `;
 SlideWrapper.displayName = 'SlideWrapper';
@@ -31,9 +31,7 @@ Slide.displayName = 'Slide';
 const SlideIndex = styled.p`
 	width: 100%;
 	text-align: center;
-	position: absolute;
-	bottom: 0;
-	margin-bottom: -40px;
+	margin-bottom: -16px;
 `;
 SlideIndex.displayName = 'SlideIndex';
 
@@ -50,30 +48,76 @@ NextButton.displayName = 'NextButton';
 class SlideShow extends React.Component {
 	constructor(props) {
 		super(props);
-		this.state = {};
+		this.state = {
+			translateX: 0,
+			slideIndex: 0
+		};
+	}
+
+	handleSlidePrevious(slideIndex) {
+		if (slideIndex === 0) {
+			return this.setState({
+				translateX: -this.props.images.length * 500 + 500,
+				slideIndex: this.props.images.length - 1
+			});
+		}
+		this.setState(prevState => ({
+			translateX: prevState.translateX + 500,
+			slideIndex: prevState.slideIndex - 1
+		}));
+	}
+
+	handleSlideNext(slideIndex) {
+		if (slideIndex + 1 === this.props.images.length) {
+			return this.setState({
+				translateX: 0,
+				slideIndex: 0
+			});
+		}
+		this.setState(prevState => ({
+			translateX: prevState.translateX - 500,
+			slideIndex: prevState.slideIndex + 1
+		}));
 	}
 
 	render() {
 		const { images } = this.props;
+		const { translateX, slideIndex } = this.state;
+
+		console.log('translateX', translateX);
+		console.log('slideIndex', slideIndex);
 		return (
 			<SlideShowWrapper>
-				<SlideWrapper>
-					{images.map((image, index) => {
+				<SlideWrapper translateX={translateX}>
+					{images.map(image => {
 						return (
 							<React.Fragment key={image}>
 								<Slide
-									style={{ backgroundImage: `url(${image})` }}
-								>
-									<SlideIndex>
-										Slide {index + 1} of {images.length}
-									</SlideIndex>
-								</Slide>
+									style={{
+										backgroundImage: `url(${image})`
+									}}
+								/>
 							</React.Fragment>
 						);
 					})}
 				</SlideWrapper>
-				<PreviousButton>Previous</PreviousButton>
-				<NextButton>Next</NextButton>
+				<SlideIndex>
+					Slide {slideIndex + 1} of {images.length}
+				</SlideIndex>
+				<PreviousButton
+					onClick={() => {
+						this.handleSlidePrevious(slideIndex);
+					}}
+				>
+					Previous
+				</PreviousButton>
+				<NextButton
+					onClick={() => {
+						this.handleSlideNext(slideIndex);
+					}}
+				>
+					Next
+				</NextButton>
 			</SlideShowWrapper>
 		);
 	}

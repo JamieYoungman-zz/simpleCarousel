@@ -41,11 +41,49 @@ describe('SlideShow', () => {
 		expect(element.find('NextButton')).toHaveLength(1);
 	});
 
-	it('should default to the first slide', () => {
-		// console.log(element.debug());
-		expect(element.find('SlideWrapper')).toHaveStyleRule(
-			'transform',
-			'translateX(0px)'
-		);
+	// it('should default to the first slide', () => {
+	// 	expect(element.find('SlideWrapper')).toHaveStyleRule(
+	// 		'transform',
+	// 		'translateX(0px)'
+	// 	);
+	// });
+
+	it('should change translateX - 500 when next button is clicled', () => {
+		element.find('NextButton').prop('onClick')();
+		expect(element.state('translateX')).toEqual(-500);
+
+		element.find('NextButton').prop('onClick')();
+		expect(element.state('translateX')).toEqual(-1000);
+
+		element.find('NextButton').prop('onClick')();
+		expect(element.state('translateX')).toEqual(-1500);
+	});
+
+	it('should go back to the start when it reaches the end', () => {
+		element.find('NextButton').prop('onClick')();
+		element.find('NextButton').prop('onClick')();
+		element.find('NextButton').prop('onClick')();
+		element.find('NextButton').prop('onClick')();
+
+		expect(element.state('translateX')).toEqual(0);
+	});
+
+	it('should change translateX + 500 when previous button is clicked', () => {
+		element.find('NextButton').prop('onClick')();
+		expect(element.state('translateX')).toEqual(-500);
+
+		element.find('NextButton').prop('onClick')();
+		expect(element.state('translateX')).toEqual(-1000);
+
+		element.find('PreviousButton').prop('onClick')();
+		expect(element.state('translateX')).toEqual(-500);
+
+		element.find('PreviousButton').prop('onClick')();
+		expect(element.state('translateX')).toEqual(0);
+	});
+
+	it('should go to the end when previous is clicked', () => {
+		element.find('PreviousButton').prop('onClick')();
+		expect(element.state('translateX')).toEqual(-1500);
 	});
 });
