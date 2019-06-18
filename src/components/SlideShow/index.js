@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 const SlideShowWrapper = styled.div`
 	position: relative;
-	width: 500px;
+	${props => `width: ${props.styleWidth}${props.percentage ? '%' : 'px'}`}
 	margin: 0 auto;
 	height: 500px;
 	overflow: hidden;
@@ -14,7 +14,10 @@ SlideShowWrapper.displayName = 'SlideShowWrapper';
 const SlideWrapper = styled.div`
 	position: relative;
 	width: 100%;
-	${props => `transform: translateX(${props.translateX}px)`};
+	${props =>
+		`transform: translateX(${props.translateX}${
+			props.percentage ? '%' : 'px'
+		})`};
 	transition: transform 0.3s ease-out;
 `;
 SlideWrapper.displayName = 'SlideWrapper';
@@ -54,20 +57,20 @@ class SlideShow extends React.Component {
 		};
 	}
 
-	handleSlidePrevious(slideIndex) {
+	handleSlidePrevious(slideIndex, width) {
 		if (slideIndex === 0) {
 			return this.setState({
-				translateX: -this.props.images.length * 500 + 500,
+				translateX: -this.props.images.length * width + width,
 				slideIndex: this.props.images.length - 1
 			});
 		}
 		this.setState(prevState => ({
-			translateX: prevState.translateX + 500,
+			translateX: prevState.translateX + width,
 			slideIndex: prevState.slideIndex - 1
 		}));
 	}
 
-	handleSlideNext(slideIndex) {
+	handleSlideNext(slideIndex, width) {
 		if (slideIndex + 1 === this.props.images.length) {
 			return this.setState({
 				translateX: 0,
@@ -75,20 +78,22 @@ class SlideShow extends React.Component {
 			});
 		}
 		this.setState(prevState => ({
-			translateX: prevState.translateX - 500,
+			translateX: prevState.translateX - width,
 			slideIndex: prevState.slideIndex + 1
 		}));
 	}
 
 	render() {
-		const { images } = this.props;
+		const { images, width, percentage } = this.props;
 		const { translateX, slideIndex } = this.state;
+
+		console.log(percentage);
 
 		console.log('translateX', translateX);
 		console.log('slideIndex', slideIndex);
 		return (
-			<SlideShowWrapper>
-				<SlideWrapper translateX={translateX}>
+			<SlideShowWrapper styleWidth={width} percentage={percentage}>
+				<SlideWrapper translateX={translateX} percentage={percentage}>
 					{images.map(image => {
 						return (
 							<React.Fragment key={image}>
@@ -106,14 +111,14 @@ class SlideShow extends React.Component {
 				</SlideIndex>
 				<PreviousButton
 					onClick={() => {
-						this.handleSlidePrevious(slideIndex);
+						this.handleSlidePrevious(slideIndex, width);
 					}}
 				>
 					Previous
 				</PreviousButton>
 				<NextButton
 					onClick={() => {
-						this.handleSlideNext(slideIndex);
+						this.handleSlideNext(slideIndex, width);
 					}}
 				>
 					Next

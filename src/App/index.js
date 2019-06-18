@@ -22,7 +22,7 @@ class App extends React.Component {
 		return (
 			<Container>
 				<Title>Simple React Carousel</Title>
-				<SlideShow title="test" images={slideImages} />
+				<SlideShow width={100} percentage images={slideImages} />
 			</Container>
 		);
 	}
